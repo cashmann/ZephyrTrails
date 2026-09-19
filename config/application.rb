@@ -23,5 +23,6 @@ module ZephyrTrails
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+    config.dartsass.build_options << "--quiet-deps"
   end
 end
