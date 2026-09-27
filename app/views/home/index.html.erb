@@ -1,12 +1,42 @@
-<div class="d-flex flex-wrap  justify-content-center align-items-center vh-100">
-  <div>
-    <h1>Welcome to ZephyrTrails</h1>
-    <div class="w-100 d-block"></div>
-    <form class="py-2">
-      <input class="form-control text-center" placeholder="Where would you like to go?"></input>
-      <div class="d-flex justify-content-center mt-4">
-        <button type="button" class="btn btn-lg btn-primary">Let's Go!</button>
+<div class="d-flex justify-content-center align-items-center vh-100 px-3">
+  <div class="bg-white rounded-4 shadow p-4 p-md-5">
+    <h1 class="h3 text-center mb-4">Plan a New Trip</h1>
+
+    <%= form_with model: @trip, url: trips_path, local: true do |f| %>
+      <% if @trip.errors.any? %>
+        <div class="alert alert-danger">
+          <ul class="mb-0 ps-3">
+            <% @trip.errors.each do |error| %>
+              <li><%= error.full_message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="mb-3">
+        <%= f.label :name, "Trip Name", class: "form-label" %>
+        <%= f.text_field :name, class: "form-control", placeholder: "Summer in Japan" %>
       </div>
-    </form>
+
+      <div class="mb-3">
+        <%= f.label :starting_location, "Starting Location", class: "form-label" %>
+        <%= f.text_field :starting_location, class: "form-control", placeholder: "Where does it begin?" %>
+      </div>
+
+      <div class="row">
+        <div class="col-6 mb-3">
+          <%= f.label :start_date, "Start Date", class: "form-label" %>
+          <%= f.date_field :start_date, class: "form-control" %>
+        </div>
+        <div class="col-6 mb-3">
+          <%= f.label :end_date, "End Date", class: "form-label" %>
+          <%= f.date_field :end_date, class: "form-control" %>
+        </div>
+      </div>
+
+      <div class="d-grid mt-4">
+        <%= f.submit "Let's Go!", class: "btn btn-lg btn-primary" %>
+      </div>
+    <% end %>
   </div>
 </div>
