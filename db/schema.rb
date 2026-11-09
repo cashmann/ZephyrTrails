@@ -10,10 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_27_211325) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_09_163256) do
   create_table "trips", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "end_date"
+    t.string "ending_location"
     t.string "name"
     t.datetime "start_date"
     t.string "starting_location"

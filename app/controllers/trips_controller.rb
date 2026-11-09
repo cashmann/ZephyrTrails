@@ -1,9 +1,13 @@
 class TripsController < ApplicationController
+  def show
+    @trip = Trip.find(params[:id])
+  end
+
   def create
     @trip = Trip.new(trip_params)
 
     if @trip.save
-      redirect_to root_path, notice: "Trip created!"
+      redirect_to @trip, notice: "Trip created!"
     else
       render "home/index", status: :unprocessable_entity
     end
@@ -12,6 +16,6 @@ class TripsController < ApplicationController
   private
 
   def trip_params
-    params.require(:trip).permit(:name, :starting_location, :start_date, :end_date)
+    params.require(:trip).permit(:name, :starting_location, :ending_location, :start_date, :end_date)
   end
 end

@@ -24,6 +24,13 @@
   </head>
 
   <body>
+    <% if notice %>
+      <div class="alert alert-success position-fixed top-0 start-50 translate-middle-x mt-3 shadow" role="alert"><%= notice %></div>
+    <% end %>
+    <% if alert %>
+      <div class="alert alert-danger position-fixed top-0 start-50 translate-middle-x mt-3 shadow" role="alert"><%= alert %></div>
+    <% end %>
+
     <%= yield %>
   </body>
 </html>

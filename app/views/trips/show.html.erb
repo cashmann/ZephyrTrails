@@ -1,0 +1,28 @@
+<% content_for :title, @trip.name %>
+
+<div class="d-flex justify-content-center align-items-center vh-100 px-3">
+  <div class="bg-white rounded-4 shadow p-4 p-md-5">
+    <h1 class="h3 text-center mb-4"><%= @trip.name %></h1>
+
+    <dl class="row mb-0">
+      <dt class="col-sm-4">From</dt>
+      <dd class="col-sm-8"><%= @trip.starting_location %></dd>
+
+      <dt class="col-sm-4">To</dt>
+      <dd class="col-sm-8"><%= @trip.ending_location %></dd>
+
+      <% if @trip.start_date || @trip.end_date %>
+        <dt class="col-sm-4">Dates</dt>
+        <dd class="col-sm-8">
+          <%= @trip.start_date&.to_date&.to_fs(:long) || "?" %>
+          &ndash;
+          <%= @trip.end_date&.to_date&.to_fs(:long) || "?" %>
+        </dd>
+      <% end %>
+    </dl>
+
+    <div class="d-grid mt-4">
+      <%= link_to "Plan Another Trip", root_path, class: "btn btn-outline-primary" %>
+    </div>
+  </div>
+</div>
