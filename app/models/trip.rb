@@ -5,6 +5,10 @@ class Trip < ApplicationRecord
 
   validate :geocode_locations
 
+  def geocoded?
+    [ starting_latitude, starting_longitude, ending_latitude, ending_longitude ].all?(&:present?)
+  end
+
   private
 
   def geocode_locations

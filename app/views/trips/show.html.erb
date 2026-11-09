@@ -1,8 +1,18 @@
 <% content_for :title, @trip.name %>
+<% content_for :head, stylesheet_link_tag("leaflet", "data-turbo-track": "reload") %>
 
-<div class="d-flex justify-content-center align-items-center vh-100 px-3">
-  <div class="bg-white rounded-4 shadow p-4 p-md-5">
+<div class="d-flex justify-content-center align-items-center min-vh-100 px-3 py-4">
+  <div class="bg-white rounded-4 shadow p-4 p-md-5 w-100 trip-card">
     <h1 class="h3 text-center mb-4"><%= @trip.name %></h1>
+
+    <% if @trip.geocoded? %>
+      <%= tag.div class: "trip-map rounded-3 mb-4",
+            data: {
+              controller: "trip-map",
+              trip_map_start_value: { lat: @trip.starting_latitude.to_f, lng: @trip.starting_longitude.to_f, label: @trip.starting_location },
+              trip_map_end_value: { lat: @trip.ending_latitude.to_f, lng: @trip.ending_longitude.to_f, label: @trip.ending_location }
+            } %>
+    <% end %>
 
     <dl class="row mb-0">
       <dt class="col-sm-4">From</dt>
