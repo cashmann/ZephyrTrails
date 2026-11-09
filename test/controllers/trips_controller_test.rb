@@ -14,15 +14,6 @@ class TripsControllerTest < ActionDispatch::IntegrationTest
     assert_select "[data-controller='trip-map']"
   end
 
-  test "omits the map for a trip without coordinates" do
-    trip = Trip.new(name: "Old Trip", starting_location: "Denver", ending_location: "Seattle")
-    trip.save!(validate: false)
-
-    get trip_path(trip)
-    assert_response :success
-    assert_select "[data-controller='trip-map']", count: 0
-  end
-
   test "requires an ending location" do
     assert_no_difference("Trip.count") do
       post trips_path, params: { trip: { name: "Road Trip", starting_location: "Denver" } }

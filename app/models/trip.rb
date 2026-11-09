@@ -5,17 +5,13 @@ class Trip < ApplicationRecord
 
   validate :geocode_locations
 
-  def geocoded?
-    [ starting_latitude, starting_longitude, ending_latitude, ending_longitude ].all?(&:present?)
-  end
-
   private
 
   def geocode_locations
     %w[starting ending].each do |prefix|
       location = self["#{prefix}_location"]
       next if location.blank?
-      next unless will_save_change_to_attribute?("#{prefix}_location") || self["#{prefix}_latitude"].nil?
+      next unless will_save_change_to_attribute?("#{prefix}_location")
 
       geocode_location(prefix, location)
     end
