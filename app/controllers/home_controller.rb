@@ -1,7 +1,7 @@
 class HomeController < ApplicationController
   def index
     @trip = Trip.new
-    @trip.stops.build(position: 1)
-    @trip.stops.build(position: 2)
+    @trip.stops.build
+    @trip.stops.build
   end
 end

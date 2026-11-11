@@ -24,5 +24,8 @@ module ZephyrTrails
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
     config.dartsass.build_options << "--quiet-deps"
+
+    # Forms mark invalid fields with Bootstrap's is-invalid class instead of a field_with_errors wrapper
+    config.action_view.field_error_proc = proc { |html_tag, _instance| html_tag }
   end
 end

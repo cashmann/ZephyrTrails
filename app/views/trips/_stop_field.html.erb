@@ -1,0 +1,14 @@
+<%# locals: (stop_form:, label:, placeholder:, removable:) -%>
+<% errors = stop_form.object.errors.full_messages_for(:location) %>
+<div class="stop-field mb-3">
+  <%= stop_form.label :location, label, class: "form-label" %>
+  <div class="input-group has-validation">
+    <%= stop_form.text_field :location, class: [ "form-control", { "is-invalid": errors.any? } ], placeholder: %>
+    <% if removable %>
+      <button type="button" class="btn btn-outline-secondary" data-action="stop-fields#remove" aria-label="Remove stop">&times;</button>
+    <% end %>
+    <% if errors.any? %>
+      <div class="invalid-feedback"><%= errors.to_sentence %></div>
+    <% end %>
+  </div>
+</div>

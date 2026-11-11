@@ -29,7 +29,7 @@ module ActiveSupport
 
     def build_trip(*locations, name: "Road Trip")
       locations = [ "Denver", "Seattle" ] if locations.empty?
-      Trip.new(name:, stops_attributes: locations.map.with_index(1) { |location, position| { position:, location: } })
+      Trip.new(name:, stops_attributes: locations.map { |location| { location: } })
     end
 
     def stub_open_route_service(distance:, duration:, geometry:)

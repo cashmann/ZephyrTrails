@@ -4,8 +4,8 @@ class TripsControllerTest < ActionDispatch::IntegrationTest
   test "creates a trip and shows it" do
     assert_difference("Trip.count") do
       post trips_path, params: { trip: { name: "Road Trip", stops_attributes: {
-        "0" => { position: 1, location: "Denver" },
-        "1" => { position: 2, location: "Seattle" }
+        "0" => { location: "Denver" },
+        "1" => { location: "Seattle" }
       } } }
     end
 
@@ -30,16 +30,40 @@ class TripsControllerTest < ActionDispatch::IntegrationTest
     assert_select "dd", "2,611 mi - 40 hr 0 min"
   end
 
+  test "creates a trip with stops in the order they appear in the form" do
+    post trips_path, params: { trip: { name: "Road Trip", stops_attributes: {
+      "0" => { location: "Denver" },
+      "1731000000000" => { location: "Boise" },
+      "1" => { location: "Seattle" }
+    } } }
+
+    assert_equal [ "Denver", "Boise", "Seattle" ], Trip.last.stops.map(&:location)
+  end
+
+  test "keeps added stops in the form when it has errors" do
+    post trips_path, params: { trip: { name: "Road Trip", stops_attributes: {
+      "0" => { location: "Denver" },
+      "1731000000000" => { location: "Nowhereville" },
+      "1" => { location: "Seattle" }
+    } } }
+
+    assert_response :unprocessable_entity
+    assert_select "[data-controller='stop-fields'] > .stop-field", count: 3
+    assert_select "[data-controller='stop-fields'] > .stop-field input.is-invalid[value='Nowhereville']"
+    assert_select "[data-controller='stop-fields'] > .stop-field button[aria-label='Remove stop']", count: 1
+  end
+
   test "shows a stop's error next to its field" do
     assert_no_difference("Trip.count") do
       post trips_path, params: { trip: { name: "Road Trip", stops_attributes: {
-        "0" => { position: 1, location: "Denver" },
-        "1" => { position: 2, location: "" }
+        "0" => { location: "Denver" },
+        "1" => { location: "" }
       } } }
     end
 
     assert_response :unprocessable_entity
-    assert_select "#trip_stops_attributes_1_location.is-invalid"
+    assert_select "#trip_stops_attributes_1_location.is-invalid + .invalid-feedback"
+    assert_select ".field_with_errors", count: 0
     assert_select ".invalid-feedback", "Location can't be blank"
     assert_select ".alert-danger", count: 0
   end

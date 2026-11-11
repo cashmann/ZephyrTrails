@@ -2,6 +2,8 @@ class Trip < ApplicationRecord
   has_many :stops, -> { order(:position) }, dependent: :destroy, inverse_of: :trip
   accepts_nested_attributes_for :stops
 
+  before_validation :number_stops
+
   validates :name, presence: true
   validate :has_start_and_end
   validate :find_routes
@@ -23,6 +25,12 @@ class Trip < ApplicationRecord
   end
 
   private
+
+  def number_stops
+    stops.each.with_index(1) do |stop, position|
+      stop.position = position
+    end
+  end
 
   def has_start_and_end
     errors.add(:base, "A trip needs a starting and an ending location") if stops.size < 2

@@ -9,6 +9,21 @@ module TripsHelper
     }
   end
 
+  def stop_field_options(trip, stop)
+    case stop
+    when trip.starting_stop
+      { label: "Starting Location", placeholder: "Where does it begin?", removable: false }
+    when trip.ending_stop
+      { label: "Ending Location", placeholder: "Where does it end?", removable: false }
+    else
+      intermediate_stop_field_options
+    end
+  end
+
+  def intermediate_stop_field_options
+    { label: "Stop Along the Way", placeholder: "Where else are you headed?", removable: true }
+  end
+
   def format_route(meters, seconds)
     "#{format_route_distance(meters)} - #{format_route_duration(seconds)}"
   end

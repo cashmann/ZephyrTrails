@@ -8,6 +8,13 @@ class TripTest < ActiveSupport::TestCase
     assert_includes trip.errors[:base], "A trip needs a starting and an ending location"
   end
 
+  test "numbers its stops in the order they were given" do
+    trip = build_trip("Seattle", "Boise", "Denver")
+    trip.save!
+
+    assert_equal [ [ "Seattle", 1 ], [ "Boise", 2 ], [ "Denver", 3 ] ], trip.stops.reload.map { |stop| [ stop.location, stop.position ] }
+  end
+
   test "starts at its first stop and ends at its last" do
     trip = build_trip("Denver", "Boise", "Seattle")
     trip.save!
