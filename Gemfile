@@ -34,6 +34,7 @@ end
 group :test do
   gem "capybara"
   gem "cuprite"
+  gem "webmock"
 end
 
 gem "json", "< 3"

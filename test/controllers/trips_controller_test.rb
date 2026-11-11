@@ -11,6 +11,7 @@ class TripsControllerTest < ActionDispatch::IntegrationTest
     assert_select "h1", "Road Trip"
     assert_select "dd", "Denver"
     assert_select "dd", "Seattle"
+    assert_select "dd", "1,306 mi - 20 hr 0 min"
     assert_select "[data-controller='trip-map']"
   end
 

@@ -1,9 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 import * as L from "leaflet"
 
-// Shows a trip's start and end locations on an OpenStreetMap map.
 export default class extends Controller {
-  static values = { start: Object, end: Object }
+  static values = { start: Object, end: Object, route: Array }
 
   connect() {
     this.map = L.map(this.element, { scrollWheelZoom: false })
@@ -13,10 +12,13 @@ export default class extends Controller {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(this.map)
 
+    const route = L.polyline(this.routeValue.map(([ lng, lat ]) => [ lat, lng ]), { color: "#0d6efd", weight: 4, opacity: 0.8 })
+      .addTo(this.map)
+
     const start = this.addMarker(this.startValue, "Start", "#198754")
     const end = this.addMarker(this.endValue, "End", "#dc3545")
 
-    this.map.fitBounds(L.latLngBounds([ start, end ]), { padding: [ 40, 40 ], maxZoom: 13 })
+    this.map.fitBounds(route.getBounds().extend(start).extend(end), { padding: [ 40, 40 ], maxZoom: 13 })
   }
 
   disconnect() {
