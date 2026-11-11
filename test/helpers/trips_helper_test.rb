@@ -12,6 +12,18 @@ class TripsHelperTest < ActionView::TestCase
     assert_equal 2, JSON.parse(map["data-trip-map-legs-value"]).size
   end
 
+  test "formats a trip's dates" do
+    assert_equal "November 09, 2026 – November 12, 2026", format_trip_dates(Trip.new(start_date: "2026-11-09", end_date: "2026-11-12"))
+    assert_equal "November 09, 2026 – ?", format_trip_dates(Trip.new(start_date: "2026-11-09"))
+    assert_nil format_trip_dates(Trip.new)
+  end
+
+  test "describes the stops between start and end" do
+    assert_nil format_stopovers(build_trip("Denver", "Seattle"))
+    assert_equal "via 1 stop", format_stopovers(build_trip("Denver", "Boise", "Seattle"))
+    assert_equal "via 2 stops", format_stopovers(build_trip("Denver", "Boise", "Boise", "Seattle"))
+  end
+
   test "formats a route as distance and duration" do
     assert_equal "1,306 mi - 20 hr 0 min", format_route(2_101_000, 72_000)
   end

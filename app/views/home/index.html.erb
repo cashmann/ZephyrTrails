@@ -3,5 +3,9 @@
     <h1 class="h3 text-center mb-4">Plan a New Trip</h1>
 
     <%= render "trips/form", trip: @trip, submit_label: "Let's Go!" %>
+
+    <div class="text-center mt-3">
+      <%= link_to "View all trips", trips_path %>
+    </div>
   </div>
 </div>

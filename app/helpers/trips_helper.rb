@@ -24,6 +24,17 @@ module TripsHelper
     { label_text: "Stop Along the Way", placeholder: "Where else are you headed?", removable: true }
   end
 
+  def format_trip_dates(trip)
+    return unless trip.start_date || trip.end_date
+
+    [ trip.start_date, trip.end_date ].map { |date| date&.to_date&.to_fs(:long) || "?" }.join(" – ")
+  end
+
+  def format_stopovers(trip)
+    stopovers = trip.stops.size - 2
+    "via #{pluralize(stopovers, "stop")}" if stopovers > 0
+  end
+
   def format_route(meters, seconds)
     "#{format_route_distance(meters)} - #{format_route_duration(seconds)}"
   end

@@ -1,0 +1,31 @@
+<% content_for :title, "All Trips" %>
+
+<div class="d-flex justify-content-center min-vh-100 px-3 py-4">
+  <div class="bg-white rounded-4 shadow p-4 p-md-5 w-100 trip-card align-self-start">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="h3 mb-0">All Trips</h1>
+      <%= link_to "Plan a New Trip", root_path, class: "btn btn-primary" %>
+    </div>
+
+    <% if @trips.any? %>
+      <div class="list-group">
+        <% @trips.each do |trip| %>
+          <%= link_to trip_path(trip), class: "trip-list-item list-group-item list-group-item-action py-3" do %>
+            <div class="d-flex justify-content-between align-items-baseline gap-3">
+              <h2 class="h6 fw-semibold mb-1"><%= trip.name %></h2>
+              <small class="text-body-secondary text-nowrap"><%= format_route(trip.route_distance, trip.route_duration) %></small>
+            </div>
+            <div><%= trip.starting_stop.location %> &rarr; <%= trip.ending_stop.location %></div>
+            <small class="text-body-secondary">
+              <%= safe_join([ format_stopovers(trip), format_trip_dates(trip) ].compact, " · ") %>
+            </small>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-center text-body-secondary my-5">
+        No trips yet. <%= link_to "Plan your first one", root_path %>.
+      </p>
+    <% end %>
+  </div>
+</div>

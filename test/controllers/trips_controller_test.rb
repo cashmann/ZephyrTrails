@@ -67,4 +67,27 @@ class TripsControllerTest < ActionDispatch::IntegrationTest
     assert_select ".invalid-feedback", "Location can't be blank"
     assert_select ".alert-danger", count: 0
   end
+
+  test "lists all trips, newest first" do
+    older = build_trip("Denver", "Seattle", name: "Older Trip")
+    older.save!
+    newer = build_trip("Denver", "Boise", "Seattle", name: "Newer Trip")
+    newer.save!
+
+    get trips_path
+
+    assert_response :success
+    assert_select ".trip-list-item h2", count: 2 do |names|
+      assert_equal [ "Newer Trip", "Older Trip" ], names.map(&:text)
+    end
+    assert_select ".trip-list-item", text: /Denver → Seattle/
+    assert_select ".trip-list-item small", text: /via 1 stop/
+  end
+
+  test "shows a message when there are no trips" do
+    get trips_path
+
+    assert_select ".trip-list-item", count: 0
+    assert_select "p", text: /No trips yet/
+  end
 end
