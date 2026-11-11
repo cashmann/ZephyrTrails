@@ -1,0 +1,7 @@
+{
+  "name": "zephyr-trails",
+  "private": true,
+  "devDependencies": {
+    "@herb-tools/linter": "0.11.2"
+  }
+}
