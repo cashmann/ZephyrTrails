@@ -2,7 +2,7 @@ class Trip < ApplicationRecord
   MAX_STOPS = 20
 
   has_many :stops, -> { order(:position) }, dependent: :destroy, inverse_of: :trip
-  accepts_nested_attributes_for :stops
+  accepts_nested_attributes_for :stops, allow_destroy: true
 
   before_validation :limit_stops, :number_stops
 
@@ -10,45 +10,53 @@ class Trip < ApplicationRecord
   validate :has_start_and_end
   validate :find_routes
 
+  def ordered_stops
+    stops.sort_by.with_index { |stop, index| [ stop.position || Float::INFINITY, index ] }
+  end
+
+  def itinerary
+    ordered_stops.reject(&:marked_for_destruction?)
+  end
+
   def starting_stop
-    stops.first
+    itinerary.first
   end
 
   def ending_stop
-    stops.last
+    itinerary.last
   end
 
   def route_distance
-    stops.drop(1).sum(&:route_distance)
+    itinerary.drop(1).sum(&:route_distance)
   end
 
   def route_duration
-    stops.drop(1).sum(&:route_duration)
+    itinerary.drop(1).sum(&:route_duration)
   end
 
   private
 
   def limit_stops
-    return if stops.size <= MAX_STOPS
+    return if itinerary.size <= MAX_STOPS
 
     errors.add(:base, "A trip can have at most #{MAX_STOPS} stops")
     throw :abort
   end
 
   def number_stops
-    stops.each.with_index(1) do |stop, position|
+    itinerary.each.with_index(1) do |stop, position|
       stop.position = position
     end
   end
 
   def has_start_and_end
-    errors.add(:base, "A trip needs a starting and an ending location") if stops.size < 2
+    errors.add(:base, "A trip needs a starting and an ending location") if itinerary.size < 2
   end
 
   def find_routes
     return if errors.any?
 
-    stops.sort_by(&:position).each_cons(2) do |from, to|
+    itinerary.each_cons(2) do |from, to|
       next unless leg_outdated?(from, to)
 
       find_route(from, to)

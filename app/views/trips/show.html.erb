@@ -8,7 +8,7 @@
     <%= trip_map_tag(@trip) %>
 
     <ol class="trip-itinerary list-unstyled mb-4">
-      <% @trip.stops.each do |stop| %>
+      <% @trip.itinerary.each do |stop| %>
         <% unless stop == @trip.starting_stop %>
           <li class="trip-itinerary-leg small text-body-secondary">
             <%= format_route(stop.route_distance, stop.route_duration) %>

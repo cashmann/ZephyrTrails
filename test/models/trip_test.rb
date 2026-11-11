@@ -30,6 +30,40 @@ class TripTest < ActiveSupport::TestCase
     assert_equal [ [ "Seattle", 1 ], [ "Boise", 2 ], [ "Denver", 3 ] ], trip.stops.reload.map { |stop| [ stop.location, stop.position ] }
   end
 
+  test "removing a stop renumbers the rest and looks up the new leg" do
+    trip = build_trip("Denver", "Boise", "Seattle")
+    trip.save!
+    denver, boise, seattle = trip.stops
+
+    trip.update!(stops_attributes: [ { id: boise.id, _destroy: true } ])
+
+    assert_equal [ [ "Denver", 1 ], [ "Seattle", 2 ] ], trip.stops.reload.map { |stop| [ stop.location, stop.position ] }
+    assert_requested :post, OpenRouteService::URL, body: { coordinates: [ denver.coordinates.reverse, seattle.coordinates.reverse ] }.to_json
+  end
+
+  test "inserting a stop by position looks up both new legs" do
+    trip = build_trip("Denver", "Seattle")
+    trip.save!
+    denver, seattle = trip.stops
+
+    trip.update!(stops_attributes: [
+      { id: denver.id, position: 1 },
+      { location: "Boise", position: 2 },
+      { id: seattle.id, position: 3 }
+    ])
+
+    assert_equal [ "Denver", "Boise", "Seattle" ], trip.stops.reload.map(&:location)
+    assert_requested :post, OpenRouteService::URL, times: 3
+  end
+
+  test "can't remove stops down to fewer than two" do
+    trip = build_trip("Denver", "Seattle")
+    trip.save!
+
+    assert_not trip.update(stops_attributes: [ { id: trip.stops.last.id, _destroy: true } ])
+    assert_includes trip.errors[:base], "A trip needs a starting and an ending location"
+  end
+
   test "starts at its first stop and ends at its last" do
     trip = build_trip("Denver", "Boise", "Seattle")
     trip.save!

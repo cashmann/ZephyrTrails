@@ -4,8 +4,8 @@ module TripsHelper
   def trip_map_tag(trip)
     tag.div class: "trip-map rounded-3 mb-4", data: {
       controller: "trip-map",
-      trip_map_stops_value: trip.stops.map { |stop| { lat: stop.latitude.to_f, lng: stop.longitude.to_f, label: stop.location } },
-      trip_map_legs_value: trip.stops.drop(1).map(&:route_geometry)
+      trip_map_stops_value: trip.itinerary.map { |stop| { lat: stop.latitude.to_f, lng: stop.longitude.to_f, label: stop.location } },
+      trip_map_legs_value: trip.itinerary.drop(1).map(&:route_geometry)
     }
   end
 
@@ -31,7 +31,7 @@ module TripsHelper
   end
 
   def format_stopovers(trip)
-    stopovers = trip.stops.size - 2
+    stopovers = trip.itinerary.size - 2
     "via #{pluralize(stopovers, "stop")}" if stopovers > 0
   end
 
