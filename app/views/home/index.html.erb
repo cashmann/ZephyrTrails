@@ -2,54 +2,6 @@
   <div class="bg-white rounded-4 shadow p-4 p-md-5">
     <h1 class="h3 text-center mb-4">Plan a New Trip</h1>
 
-    <%= form_with model: @trip, url: trips_path, local: true do |f| %>
-      <% trip_errors = @trip.errors.reject { |error| error.is_a?(ActiveModel::NestedError) } %>
-      <% if trip_errors.any? %>
-        <div class="alert alert-danger">
-          <ul class="mb-0 ps-3">
-            <% trip_errors.each do |error| %>
-              <li><%= error.full_message %></li>
-            <% end %>
-          </ul>
-        </div>
-      <% end %>
-
-      <div class="mb-3">
-        <%= f.label :name, "Trip Name", class: "form-label" %>
-        <%= f.text_field :name, class: "form-control", placeholder: "Summer in Japan" %>
-      </div>
-
-      <div data-controller="stop-fields" data-stop-fields-max-value="<%= Trip::MAX_STOPS %>">
-        <%= f.fields_for :stops do |stop_form| %>
-          <% if stop_form.object == @trip.ending_stop %>
-            <div class="mb-3" data-stop-fields-target="insertionPoint">
-              <button type="button" class="btn btn-sm btn-outline-primary" data-action="stop-fields#add" data-stop-fields-target="addButton">+ Add a stop</button>
-            </div>
-          <% end %>
-          <%= render "trips/stop_field", stop_form:, **stop_field_options(@trip, stop_form.object) %>
-        <% end %>
-
-        <template data-stop-fields-target="template">
-          <%= f.fields_for :stops, Stop.new, child_index: "NEW_STOP" do |stop_form| %>
-            <%= render "trips/stop_field", stop_form:, **intermediate_stop_field_options %>
-          <% end %>
-        </template>
-      </div>
-
-      <div class="row">
-        <div class="col-6 mb-3">
-          <%= f.label :start_date, "Start Date", class: "form-label" %>
-          <%= f.date_field :start_date, class: "form-control" %>
-        </div>
-        <div class="col-6 mb-3">
-          <%= f.label :end_date, "End Date", class: "form-label" %>
-          <%= f.date_field :end_date, class: "form-control" %>
-        </div>
-      </div>
-
-      <div class="d-grid mt-4">
-        <%= f.submit "Let's Go!", class: "btn btn-lg btn-primary" %>
-      </div>
-    <% end %>
+    <%= render "trips/form", trip: @trip, submit_label: "Let's Go!" %>
   </div>
 </div>
