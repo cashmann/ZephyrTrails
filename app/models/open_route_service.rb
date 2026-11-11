@@ -17,6 +17,7 @@ module OpenRouteService
 
     raise_error(response, body) unless response.is_a?(Net::HTTPSuccess)
     parse_route(body)
+
   rescue JSON::ParserError, KeyError, Timeout::Error, SocketError, SystemCallError => e
     raise Error, "OpenRouteService request failed: #{e.class}: #{e.message}"
   end

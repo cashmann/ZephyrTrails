@@ -10,21 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_09_173902) do
-  create_table "trips", force: :cascade do |t|
+ActiveRecord::Schema[8.1].define(version: 2026_11_11_203619) do
+  create_table "stops", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.datetime "end_date"
-    t.decimal "ending_latitude", precision: 10, scale: 6
-    t.string "ending_location"
-    t.decimal "ending_longitude", precision: 10, scale: 6
-    t.string "name"
+    t.decimal "latitude", precision: 10, scale: 6, null: false
+    t.string "location", null: false
+    t.decimal "longitude", precision: 10, scale: 6, null: false
+    t.integer "position", null: false
     t.float "route_distance"
     t.float "route_duration"
     t.json "route_geometry"
+    t.integer "trip_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["trip_id", "position"], name: "index_stops_on_trip_id_and_position"
+  end
+
+  create_table "trips", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "end_date"
+    t.string "name"
     t.datetime "start_date"
-    t.decimal "starting_latitude", precision: 10, scale: 6
-    t.string "starting_location"
-    t.decimal "starting_longitude", precision: 10, scale: 6
     t.datetime "updated_at", null: false
   end
+
+  add_foreign_key "stops", "trips"
 end

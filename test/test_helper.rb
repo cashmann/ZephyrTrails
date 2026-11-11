@@ -11,6 +11,7 @@ Geocoder.configure(lookup: :test)
 Geocoder::Lookup::Test.set_default_stub([])
 Geocoder::Lookup::Test.add_stub("Denver", [ { "coordinates" => [ 39.7392, -104.9903 ] } ])
 Geocoder::Lookup::Test.add_stub("Seattle", [ { "coordinates" => [ 47.6062, -122.3321 ] } ])
+Geocoder::Lookup::Test.add_stub("Boise", [ { "coordinates" => [ 43.615, -116.2023 ] } ])
 
 module ActiveSupport
   class TestCase
@@ -24,6 +25,11 @@ module ActiveSupport
     # two-point route unless a test stubs something else.
     setup do
       stub_open_route_service(distance: 2_101_000.0, duration: 72_000.0, geometry: [ [ -104.9903, 39.7392 ], [ -122.3321, 47.6062 ] ])
+    end
+
+    def build_trip(*locations, name: "Road Trip")
+      locations = [ "Denver", "Seattle" ] if locations.empty?
+      Trip.new(name:, stops_attributes: locations.map.with_index(1) { |location, position| { position:, location: } })
     end
 
     def stub_open_route_service(distance:, duration:, geometry:)

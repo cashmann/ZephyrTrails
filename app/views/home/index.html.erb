@@ -3,10 +3,11 @@
     <h1 class="h3 text-center mb-4">Plan a New Trip</h1>
 
     <%= form_with model: @trip, url: trips_path, local: true do |f| %>
-      <% if @trip.errors.any? %>
+      <% trip_errors = @trip.errors.reject { |error| error.is_a?(ActiveModel::NestedError) } %>
+      <% if trip_errors.any? %>
         <div class="alert alert-danger">
           <ul class="mb-0 ps-3">
-            <% @trip.errors.each do |error| %>
+            <% trip_errors.each do |error| %>
               <li><%= error.full_message %></li>
             <% end %>
           </ul>
@@ -18,15 +19,19 @@
         <%= f.text_field :name, class: "form-control", placeholder: "Summer in Japan" %>
       </div>
 
-      <div class="mb-3">
-        <%= f.label :starting_location, "Starting Location", class: "form-label" %>
-        <%= f.text_field :starting_location, class: "form-control", placeholder: "Where does it begin?" %>
-      </div>
-
-      <div class="mb-3">
-        <%= f.label :ending_location, "Ending Location", class: "form-label" %>
-        <%= f.text_field :ending_location, class: "form-control", placeholder: "Where does it end?" %>
-      </div>
+      <%= f.fields_for :stops do |stop_form| %>
+        <% starting = stop_form.index.zero? %>
+        <% stop_errors = stop_form.object.errors.full_messages_for(:location) %>
+        <div class="mb-3">
+          <%= stop_form.hidden_field :position %>
+          <%= stop_form.label :location, starting ? "Starting Location" : "Ending Location", class: "form-label" %>
+          <%= stop_form.text_field :location, class: [ "form-control", ("is-invalid" if stop_errors.any?) ],
+                placeholder: starting ? "Where does it begin?" : "Where does it end?" %>
+          <% if stop_errors.any? %>
+            <div class="invalid-feedback"><%= stop_errors.to_sentence %></div>
+          <% end %>
+        </div>
+      <% end %>
 
       <div class="row">
         <div class="col-6 mb-3">
