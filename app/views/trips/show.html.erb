@@ -29,6 +29,7 @@
     </dl>
 
     <div class="d-grid gap-2 mt-4">
+      <%= link_to "Edit Trip", edit_trip_path(@trip), class: "btn btn-primary" %>
       <div class="d-flex gap-2">
         <%= link_to "All Trips", trips_path, class: "btn btn-outline-primary flex-fill" %>
         <%= link_to "Plan Another Trip", root_path, class: "btn btn-outline-primary flex-fill" %>

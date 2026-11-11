@@ -17,7 +17,16 @@ export default class extends Controller {
   }
 
   remove(event) {
-    event.currentTarget.closest(".stop-field").remove()
+    const field = event.currentTarget.closest(".stop-field")
+    const destroyField = field.querySelector("[data-destroy-field]")
+
+    if (destroyField) {
+      destroyField.value = "1"
+      field.hidden = true
+    } else {
+      field.remove()
+    }
+
     this.updateAddButton()
   }
 
@@ -26,6 +35,6 @@ export default class extends Controller {
   }
 
   get stopCount() {
-    return this.element.querySelectorAll(":scope > .stop-field").length
+    return this.element.querySelectorAll(":scope > .stop-field:not([hidden])").length
   }
 }

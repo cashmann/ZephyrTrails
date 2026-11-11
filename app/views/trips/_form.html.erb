@@ -17,7 +17,7 @@
   </div>
 
   <div data-controller="stop-fields" data-stop-fields-max-value="<%= Trip::MAX_STOPS %>">
-    <%= f.fields_for :stops do |stop_form| %>
+    <%= f.fields_for :stops, trip.ordered_stops do |stop_form| %>
       <% if stop_form.object == trip.ending_stop %>
         <div class="mb-3" data-stop-fields-target="insertionPoint">
           <button type="button" class="btn btn-sm btn-outline-primary" data-action="stop-fields#add" data-stop-fields-target="addButton">+ Add a stop</button>

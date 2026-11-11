@@ -1,6 +1,9 @@
 <%# locals: (stop_form:, label_text:, placeholder:, removable:) -%>
 <% errors = stop_form.object.errors.full_messages_for(:location) %>
-<div class="stop-field mb-3">
+<%= tag.div class: "stop-field mb-3", hidden: stop_form.object.marked_for_destruction? do %>
+  <% if stop_form.object.persisted? %>
+    <%= stop_form.hidden_field :_destroy, data: { destroy_field: true } %>
+  <% end %>
   <%= stop_form.label :location, label_text, class: "form-label" %>
   <div class="input-group has-validation">
     <%= stop_form.text_field :location, class: [ "form-control", { "is-invalid": errors.any? } ], placeholder: %>
@@ -11,4 +14,4 @@
       <div class="invalid-feedback"><%= errors.to_sentence %></div>
     <% end %>
   </div>
-</div>
+<% end %>

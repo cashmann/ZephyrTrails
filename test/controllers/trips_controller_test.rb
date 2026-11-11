@@ -90,4 +90,53 @@ class TripsControllerTest < ActionDispatch::IntegrationTest
     assert_select ".trip-list-item", count: 0
     assert_select "p", text: /No trips yet/
   end
+
+  test "edits a trip's stops in order" do
+    trip = build_trip("Denver", "Boise", "Seattle")
+    trip.save!
+
+    get edit_trip_path(trip)
+
+    assert_response :success
+    assert_select "[data-controller='stop-fields'] > .stop-field input[type=text]", count: 3 do |fields|
+      assert_equal [ "Denver", "Boise", "Seattle" ], fields.map { |field| field["value"] }
+    end
+    assert_select "[data-controller='stop-fields'] > .stop-field button[aria-label='Remove stop']", count: 1
+  end
+
+  test "updates a trip with stops added and removed in form order" do
+    trip = build_trip("Denver", "Boise", "Seattle")
+    trip.save!
+    denver, boise, seattle = trip.stops
+
+    patch trip_path(trip), params: { trip: { name: "Detour", stops_attributes: {
+      "0" => { id: denver.id, location: "Denver" },
+      "1" => { id: boise.id, location: "Boise", _destroy: "1" },
+      "1731000000000" => { location: "Boise" },
+      "2" => { id: seattle.id, location: "Seattle" }
+    } } }
+
+    assert_redirected_to trip_path(trip)
+    trip.reload
+    assert_equal "Detour", trip.name
+    assert_equal [ "Denver", "Boise", "Seattle" ], trip.stops.map(&:location)
+    assert_not Stop.exists?(boise.id)
+  end
+
+  test "keeps a removed stop hidden when the edit has errors" do
+    trip = build_trip("Denver", "Boise", "Seattle")
+    trip.save!
+    denver, boise, seattle = trip.stops
+
+    patch trip_path(trip), params: { trip: { name: "", stops_attributes: {
+      "0" => { id: denver.id, location: "Denver" },
+      "1" => { id: boise.id, location: "Boise", _destroy: "1" },
+      "2" => { id: seattle.id, location: "Seattle" }
+    } } }
+
+    assert_response :unprocessable_entity
+    assert_select ".alert-danger", text: /Name can't be blank/
+    assert_select ".stop-field[hidden] input[value='Boise']"
+    assert_select ".stop-field[hidden] input[data-destroy-field][value='true']"
+  end
 end

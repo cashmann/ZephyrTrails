@@ -1,0 +1,13 @@
+<% content_for :title, "Edit #{@trip.name}" %>
+
+<div class="d-flex justify-content-center align-items-center min-vh-100 px-3 py-4">
+  <div class="bg-white rounded-4 shadow p-4 p-md-5">
+    <h1 class="h3 text-center mb-4">Edit Trip</h1>
+
+    <%= render "trips/form", trip: @trip, submit_label: "Save Changes" %>
+
+    <div class="text-center mt-3">
+      <%= link_to "Cancel", trip_path(@trip) %>
+    </div>
+  </div>
+</div>

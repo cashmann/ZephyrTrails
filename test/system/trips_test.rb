@@ -72,4 +72,23 @@ class TripsTest < ApplicationSystemTestCase
       assert_selector "path.leaflet-interactive", count: 5
     end
   end
+
+  test "editing a trip from the trips list" do
+    trip = build_trip("Denver", "Boise", "Seattle", name: "Road Trip")
+    trip.save!
+
+    visit trips_path
+    click_on "Road Trip"
+    click_on "Edit Trip"
+
+    fill_in "Trip Name", with: "Northern Route"
+    find("button[aria-label='Remove stop']").click
+    click_on "+ Add a stop"
+    all(".stop-field:not([hidden]) input[type=text]", count: 3)[1].fill_in with: "Denver"
+    click_on "Save Changes"
+
+    assert_text "Trip updated!"
+    assert_selector "h1", text: "Northern Route"
+    assert_equal [ "Denver", "Denver", "Seattle" ], all(".trip-itinerary-stop").map(&:text)
+  end
 end
