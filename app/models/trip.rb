@@ -1,8 +1,10 @@
 class Trip < ApplicationRecord
+  MAX_STOPS = 20
+
   has_many :stops, -> { order(:position) }, dependent: :destroy, inverse_of: :trip
   accepts_nested_attributes_for :stops
 
-  before_validation :number_stops
+  before_validation :limit_stops, :number_stops
 
   validates :name, presence: true
   validate :has_start_and_end
@@ -25,6 +27,13 @@ class Trip < ApplicationRecord
   end
 
   private
+
+  def limit_stops
+    return if stops.size <= MAX_STOPS
+
+    errors.add(:base, "A trip can have at most #{MAX_STOPS} stops")
+    throw :abort
+  end
 
   def number_stops
     stops.each.with_index(1) do |stop, position|

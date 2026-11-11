@@ -8,6 +8,21 @@ class TripTest < ActiveSupport::TestCase
     assert_includes trip.errors[:base], "A trip needs a starting and an ending location"
   end
 
+  test "can have up to 20 stops" do
+    trip = build_trip(*[ "Denver", "Seattle" ] * 10)
+
+    assert trip.valid?
+  end
+
+  test "can't have more than 20 stops, and doesn't look any of them up" do
+    trip = build_trip(*[ "Denver", "Seattle" ] * 10, "Boise")
+
+    assert_not trip.valid?
+    assert_includes trip.errors[:base], "A trip can have at most 20 stops"
+    assert trip.stops.none?(&:latitude)
+    assert_not_requested :post, OpenRouteService::URL
+  end
+
   test "numbers its stops in the order they were given" do
     trip = build_trip("Seattle", "Boise", "Denver")
     trip.save!

@@ -37,6 +37,16 @@ class TripsTest < ApplicationSystemTestCase
     assert_equal [ "Denver", "Boise", "Seattle" ], all(".trip-itinerary-stop").map(&:text)
   end
 
+  test "can't add more than 20 stops" do
+    visit root_path
+
+    18.times { click_on "+ Add a stop" }
+    assert_button "+ Add a stop", disabled: true
+
+    all("button[aria-label='Remove stop']").last.click
+    assert_button "+ Add a stop", disabled: false
+  end
+
   test "a stop that can't be found shows its error under the field" do
     visit root_path
 
