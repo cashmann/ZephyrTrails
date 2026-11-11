@@ -12,10 +12,22 @@ class TripsControllerTest < ActionDispatch::IntegrationTest
     follow_redirect!
     assert_response :success
     assert_select "h1", "Road Trip"
-    assert_select "dd", "Denver"
-    assert_select "dd", "Seattle"
-    assert_select "dd", "1,306 mi - 20 hr 0 min"
+    assert_select ".trip-itinerary-stop.is-start", "Denver"
+    assert_select ".trip-itinerary-stop.is-end", "Seattle"
     assert_select "[data-controller='trip-map']"
+  end
+
+  test "shows every stop with the drive of each leg" do
+    trip = build_trip("Denver", "Boise", "Seattle")
+    trip.save!
+
+    get trip_path(trip)
+
+    assert_select ".trip-itinerary-stop", count: 3 do |stops|
+      assert_equal [ "Denver", "Boise", "Seattle" ], stops.map(&:text)
+    end
+    assert_select ".trip-itinerary-leg", count: 2, text: "1,306 mi - 20 hr 0 min"
+    assert_select "dd", "2,611 mi - 40 hr 0 min"
   end
 
   test "shows a stop's error next to its field" do

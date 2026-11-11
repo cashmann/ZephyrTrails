@@ -5,23 +5,22 @@
   <div class="bg-white rounded-4 shadow p-4 p-md-5 w-100 trip-card">
     <h1 class="h3 text-center mb-4"><%= @trip.name %></h1>
 
-    <%= tag.div class: "trip-map rounded-3 mb-4",
-          data: {
-            controller: "trip-map",
-            trip_map_start_value: { lat: @trip.starting_stop.latitude.to_f, lng: @trip.starting_stop.longitude.to_f, label: @trip.starting_stop.location },
-            trip_map_end_value: { lat: @trip.ending_stop.latitude.to_f, lng: @trip.ending_stop.longitude.to_f, label: @trip.ending_stop.location },
-            trip_map_route_value: @trip.route_geometry
-          } %>
+    <%= trip_map_tag(@trip) %>
+
+    <ol class="trip-itinerary list-unstyled mb-4">
+      <% @trip.stops.each do |stop| %>
+        <% unless stop == @trip.starting_stop %>
+          <li class="trip-itinerary-leg small text-body-secondary">
+            <%= format_route(stop.route_distance, stop.route_duration) %>
+          </li>
+        <% end %>
+        <%= tag.li stop.location, class: [ "trip-itinerary-stop fw-semibold", { "is-start": stop == @trip.starting_stop, "is-end": stop == @trip.ending_stop } ] %>
+      <% end %>
+    </ol>
 
     <dl class="row mb-0">
-      <dt class="col-sm-4">From</dt>
-      <dd class="col-sm-8"><%= @trip.starting_stop.location %></dd>
-
-      <dt class="col-sm-4">To</dt>
-      <dd class="col-sm-8"><%= @trip.ending_stop.location %></dd>
-
-      <dt class="col-sm-4">Drive</dt>
-      <dd class="col-sm-8"><%= format_route_distance(@trip.route_distance) %> - <%= format_route_duration(@trip.route_duration) %></dd>
+      <dt class="col-sm-4">Total Drive</dt>
+      <dd class="col-sm-8"><%= format_route(@trip.route_distance, @trip.route_duration) %></dd>
 
       <% if @trip.start_date || @trip.end_date %>
         <dt class="col-sm-4">Dates</dt>

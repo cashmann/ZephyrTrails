@@ -41,7 +41,6 @@ class TripTest < ActiveSupport::TestCase
 
     assert_equal 4_202_000.0, trip.route_distance
     assert_equal 144_000.0, trip.route_duration
-    assert_equal 4, trip.route_geometry.size
   end
 
   test "only looks up the legs touching a changed stop" do

@@ -22,10 +22,6 @@ class Trip < ApplicationRecord
     stops.drop(1).sum(&:route_duration)
   end
 
-  def route_geometry
-    stops.drop(1).flat_map(&:route_geometry)
-  end
-
   private
 
   def has_start_and_end

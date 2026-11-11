@@ -16,4 +16,16 @@ class TripsTest < ApplicationSystemTestCase
       assert_selector "path.leaflet-interactive", count: 3
     end
   end
+
+  test "a trip with several stops shows each leg and stop on the map" do
+    trip = build_trip("Denver", "Boise", "Seattle")
+    trip.save!
+
+    visit trip_path(trip)
+
+    within ".trip-map.leaflet-container" do
+      # Two route lines plus three stop markers
+      assert_selector "path.leaflet-interactive", count: 5
+    end
+  end
 end

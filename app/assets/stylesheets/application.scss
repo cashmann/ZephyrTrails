@@ -14,3 +14,36 @@ body {
 .trip-card {
   max-width: 40rem;
 }
+
+.trip-itinerary {
+  --stop-color: #0d6efd;
+
+  .trip-itinerary-stop {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    &::before {
+      content: "";
+      flex: none;
+      width: 0.875rem;
+      height: 0.875rem;
+      border-radius: 50%;
+      background: var(--stop-color);
+    }
+
+    &.is-start {
+      --stop-color: #198754;
+    }
+
+    &.is-end {
+      --stop-color: #dc3545;
+    }
+  }
+
+  .trip-itinerary-leg {
+    margin-left: 0.4rem;
+    padding: 0.35rem 0 0.35rem 1.1rem;
+    border-left: 2px dotted var(--bs-border-color);
+  }
+}
