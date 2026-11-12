@@ -37,6 +37,6 @@ group :test do
   gem "webmock"
 end
 
-gem "json", "< 3"
+gem "json", "< 4"
 
 gem "geocoder", "~> 1.8"
